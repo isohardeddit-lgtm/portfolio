@@ -145,6 +145,27 @@ box-shadow: 0 0 25px #0055ff, inset 0 0 12px #00d2ff;
 
 .fire-ticker:hover .ticker-track {
 animation-play-state: paused;
+/* Настройки для мобильных телефонов */
+@media (max-width: 768px) {
+.fire-ticker {
+/* Чуть уменьшаем отступ сверху на смартфонах, чтобы не было гигантской дыры */
+margin-top: 35px;
+padding: 10px 0;
+}
+
+.ticker-item {
+/* Уменьшаем размер шрифта, чтобы фразы аккуратно ложились в экран телефона */
+font-size: 0.95rem;
+letter-spacing: 1px;
+padding: 0 10px; /* Сужаем отступы между текстом */
+}
+
+.ticker-arrow {
+/* Уменьшаем стрелочки соразмерно тексту */
+font-size: 1rem;
+padding: 0 10px;
+}
+}
 }
 </style>
 <!-- Yandex.Metrika counter -->
