@@ -60,59 +60,72 @@ color: #fff;
 
 <!-- Наш новый живой заголовок -->
 <h1 class="neon-title">Portfolio</h1>
-<!-- Контейнер для "ползущего" подзаголовка -->
-<div class="ticker-wrapper">
-<div class="ticker-text">
-<span>Разработка, которая работает. • Реклама, которая окупается. • Всё автоматизировано. • </span>
-<!-- Повторяем текст второй раз для эффекта бесшовности (как змея, кусающая свой хвост) -->
-<span>Разработка, которая работает. • Реклама, которая окупается. • Всё автоматизировано. • </span>
+<!-- Контейнер для идеально крутящегося подзаголовка -->
+<div class="globe-ticker">
+<div class="ticker-track">
+<!-- Дублируем текст 4 раза, чтобы создать непрерывное кольцо "глобуса" без разрывов и отмоток -->
+<span class="ticker-item">Разработка которая работает</span>
+<span class="ticker-item">Реклама которая окупается</span>
+<span class="ticker-item">Всё автоматизировано</span>
+
+<span class="ticker-item">Разработка которая работает</span>
+<span class="ticker-item">Реклама которая окупается</span>
+<span class="ticker-item">Всё автоматизировано</span>
 </div>
 </div>
 
-<!-- Стили для анимации строки (вставьте это внутрь вашего существующего тега <style>) -->
 <style>
-.ticker-wrapper {
+/* Подключаем крутой, плотный футуристичный шрифт */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap');
+
+.globe-ticker {
 width: 100%;
-overflow: hidden; /* Прячем текст, который выходит за границы экрана */
-margin-top: 30px;
-padding: 10px 0;
-background: rgba(0, 0, 0, 0.4); /* Легкая подложка */
-border-top: 1px solid rgba(0, 243, 255, 0.2);
-border-bottom: 1px solid rgba(255, 0, 243, 0.2);
+overflow: hidden;
+margin-top: 35px;
+padding: 14px 0;
+background: rgba(0, 0, 0, 0.6);
+
+/* Четкие, толстые красные линии сверху и снизу (одинакового цвета, без кривизны) */
+border-top: 3px solid #ff003c;
+border-bottom: 3px solid #ff003c;
+
+/* Сочное красное свечение вокруг самой полосы */
+box-shadow: 0 0 15px rgba(255, 0, 60, 0.4);
 }
 
-.ticker-text {
+.ticker-track {
 display: flex;
-white-space: nowrap;
-font-family: 'Segoe UI', sans-serif;
-font-size: 1.1rem;
-font-weight: 500;
+width: max-content;
+/* Бесконечное вращение в одну сторону, никаких анимаций назад */
+animation: rotate-globe 20s linear infinite;
+}
+
+.ticker-item {
+font-family: 'Montserrat', sans-serif;
+font-size: 1.2rem;
+font-weight: 800;
 text-transform: uppercase;
-letter-spacing: 2px;
-/* Наш завораживающий эффект: текст переливается от неона IT (голубой) к неону рекламы (пурпурный) */
-color: #fff;
-text-shadow: 0 0 8px #00f3ff, 0 0 15px #ff00f3;
+letter-spacing: 3px;
+color: #ffffff; /* Чистый белый читаемый цвет букв */
+padding: 0 40px; /* Отступы между фразами вместо точек */
 
-/* Запускаем движение "змеи" (25 секунд на полный круг, бесконечно) */
-animation: crawl 25s linear infinite;
+/* Легкое аккуратное свечение самим буквам, чтобы сочеталось с неоном заголовка */
+text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
 }
 
-.ticker-text span {
-padding-right: 50px; /* Отступ между повторяющимися фразами */
-}
-
-/* Сама магия движения */
-@keyframes crawl {
+/* Магия бесшовного вращения "по кругу" */
+@keyframes rotate-globe {
 0% {
 transform: translate3d(0, 0, 0);
 }
 100% {
-transform: translate3d(-50%, 0, 0); /* Сдвигаем ровно на половину, создавая иллюзию бесконечной ленты */
+/* Сдвигаем ровно на половину длины всей ленты, создавая эффект идеального стыка */
+transform: translate3d(-50%, 0, 0);
 }
 }
 
-/* Чтобы при наведении мышки или пальца "змея" замирала */
-.ticker-wrapper:hover .ticker-text {
+/* При наведении (или удержании пальцем) лента плавно замирает */
+.globe-ticker:hover .ticker-track {
 animation-play-state: paused;
 }
 </style>
