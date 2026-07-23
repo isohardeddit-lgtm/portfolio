@@ -168,30 +168,82 @@ padding: 0 10px;
 }
 }
 </style>
-<!-- РАЗДЕЛ ПРОЕКТОВ -->
-<div style="width: 100%!important; максимальная ширина: 700px !important; Margin: 40px auto !important; Заполнение: 0 20px !важно; размер коробки: бордёрк! важно;»
->
-<!-- Неоновый заголовок -->
-<div style="font-family: 'Segoe UI', Roboto, sans-serif !important; размер шрифта: 1.8 rem !important; Толщина шрифта: 800 !важно; преобразование текста: заглавная буква !important; интервал между буквами: 3px !важно; цвет: #ffffff !important; text-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff !important; margin-bottom: 20px !important; выравнивание текста: влево!важно;»
-> МОИ ПРОЕКТЫ
+<div style="
+width: 100% !important;
+max-width: 650px !important;
+margin: 50px auto !important;
+padding: 0 20px !important;
+box-sizing: border-box !important;
+display: flex !important;
+flex-direction: column !important;
+align-items: center !important;
+">
+
+<h2 style="
+font-family: 'Segoe UI', Roboto, sans-serif !important;
+font-size: 2rem !important;
+font-weight: 900 !important;
+text-transform: uppercase !important;
+letter-spacing: 4px !important;
+color: #ffffff !important;
+text-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff, 0 0 30px #00f3ff, 0 0 40px #00f3ff !important;
+margin-bottom: 30px !important;
+text-align: center !important;
+border-bottom: 3px solid #00f3ff !important;
+padding-bottom: 10px !important;
+display: inline-block !important;
+">
+МОИ ПРОЕКТЫ
+</h2>
+
+<a href="dashboard.html" style="text-decoration: none !important; display: block !important; width: 100% !important;">
+<div style="
+background: rgba(15, 23, 42, 0.9) !important;
+border: 2px solid rgba(0, 243, 255, 0.6) !important;
+border-radius: 16px !important;
+padding: 24px !important;
+text-align: left !important;
+box-shadow: 0 0 15px rgba(0, 243, 255, 0.2) !important;
+width: 100% !important;
+box-sizing: border-box !important;
+transition: all 0.3s ease !important;
+" onmouseover="
+this.querySelector('.project-title-text').style.textShadow='0 0 12px #ffffff, 0 0 20px #ffffff';
+this.style.borderColor='#00f3ff';
+this.style.boxShadow='0 0 25px rgba(0, 243, 255, 0.5)';
+" onmouseout="
+this.querySelector('.project-title-text').style.textShadow='none';
+this.style.borderColor='rgba(0, 243, 255, 0.6)';
+this.style.boxShadow='0 0 15px rgba(0, 243, 255, 0.2)';
+">
+
+<div class="project-title-text" style="
+color: #ffffff !important;
+font-size: 1.3rem !important;
+font-weight: 800 !important;
+margin-bottom: 10px !important;
+font-family: 'Segoe UI', Roboto, sans-serif !important;
+transition: text-shadow 0.3s ease !important;
+display: flex !important;
+align-items: center !important;
+justify-content: space-between !important;
+">
+<span>🖥️ Server Health Dashboard</span>
+<span style="color: #00f3ff; font-size: 1.2rem;">→</span>
 </div>
 
-<!-- Карточка проекта -->
-<a href="dashboard.html" style="text-decoration: none !important; Отображать: блокировать !важно; ширина: 100% !важно;» >
-<div style="Background: RGBA(15, 23, 42, 0.8)!важно; Бордюр: 1 пиксель твердо #00f3ff !важно; радиус границы: 12 пикселей !важно; наполнение: 20px 25px !важно; Box-shadow: 0 0 15px RGBA(0, 243, 255, 0.2) !важно; Отображать: блокировать !важно; ширина: 100% !important; размер коробки: бордёрк! важно;»
->
-<!-- Заголовок внутри карточки -->
-<div style="color: #00f3ff !important; Размер шрифта: 1.25rem!важно; Толщина шрифта: 700 !важно; margin-bottom: 10px !important; Отображать: блокировать !важно; text-shadow: 0 0 5px rgba(0,243,255,0.5)!важно;"
-> 🚀 Панель управления состоянием сервера →
-</div
->
-<!-- Описание -->
-<div style="color: #e2e8f0 !important; размер шрифта: 0.95rem!important; высота строки: 1,5 !важно; Отображать: блокировать !важно; семейство шрифтов: sans-serif!important;"
-> Интерактивная панель мониторинга Linux-сервера. Нажми, чтобы открыть живые датчики CPU и памяти.
+<div style="
+color: #e2e8f0 !important;
+font-size: 0.95rem !important;
+line-height: 1.5 !important;
+font-family: 'Segoe UI', Roboto, sans-serif !important;
+opacity: 0.9 !important;
+">
+Интерактивная панель мониторинга Linux-сервера. Нажми, чтобы открыть живые датчики CPU и памяти.
 </div>
 
-</div
-> </a>
+</div>
+</a>
 
 </div>
 <!-- Yandex.Metrika counter -->
