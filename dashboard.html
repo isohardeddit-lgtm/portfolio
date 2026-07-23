@@ -100,22 +100,31 @@ display: grid;
 grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 gap: 25px;
 width: 100%;
+align-items: start;
 }
 
 .card {
 background: rgba(15, 23, 42, 0.75);
 border: 1px solid rgba(0, 243, 255, 0.25);
 border-radius: 20px;
-padding: 28px;
+padding: 24px;
 backdrop-filter: blur(10px);
 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 transition: all 0.3s ease;
+cursor: pointer;
+position: relative;
 }
 
 .card:hover {
 border-color: rgba(0, 243, 255, 0.6);
 box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
 transform: translateY(-4px);
+}
+
+.card-header-flex {
+display: flex;
+justify-content: space-between;
+align-items: center;
 }
 
 .card-title {
@@ -125,6 +134,16 @@ text-transform: uppercase;
 letter-spacing: 1.5px;
 font-weight: 700;
 margin-bottom: 15px;
+}
+
+.expand-icon {
+color: #00f3ff;
+font-size: 0.9rem;
+transition: transform 0.3s ease;
+}
+
+.card.active .expand-icon {
+transform: rotate(180deg);
 }
 
 .metric-value {
@@ -171,6 +190,45 @@ font-size: 0.85rem;
 margin-top: 10px;
 font-weight: 600;
 }
+
+/* Выпадающий блок деталей */
+.details-panel {
+max-height: 0;
+overflow: hidden;
+transition: max-height 0.4s ease-in-out, opacity 0.3s ease;
+opacity: 0;
+margin-top: 0;
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+padding-top: 0;
+}
+
+.card.active .details-panel {
+max-height: 200px;
+opacity: 1;
+margin-top: 18px;
+padding-top: 15px;
+}
+
+.detail-row {
+display: flex;
+justify-content: space-between;
+font-size: 0.85rem;
+color: #cbd5e1;
+margin-bottom: 8px;
+}
+
+.detail-row span:last-child {
+color: #00f3ff;
+font-weight: 600;
+}
+
+.click-hint {
+font-size: 0.75rem;
+color: #64748b;
+text-align: center;
+margin-top: 10px;
+font-style: italic;
+}
 </style>
 </head>
 <body>
@@ -189,36 +247,77 @@ font-weight: 600;
 Server Health Dashboard
 </h1>
 <p class="subtitle">Мониторинг узла Node-01 | Ubuntu Linux</p>
+<p class="click-hint">💡 Нажмите на любую карточку, чтобы открыть подробности</p>
 </div>
 
 <!-- Карточки с метриками -->
 <div class="grid">
 
-<div class="card">
+<!-- Карточка CPU -->
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header-flex">
 <div class="card-title">Загрузка CPU</div>
+<span class="expand-icon">▼</span>
+</div>
 <div class="metric-value">42%</div>
 <div class="progress-bar">
 <div class="progress-fill-cpu"></div>
 </div>
+
+<div class="details-panel">
+<div class="detail-row"><span>Ядро 1 (Core 0):</span> <span>38%</span></div>
+<div class="detail-row"><span>Ядро 2 (Core 1):</span> <span>46%</span></div>
+<div class="detail-row"><span>Температура:</span> <span>42°C</span></div>
+<div class="detail-row"><span>Архитектура:</span> <span>x86_64</span></div>
+</div>
 </div>
 
-<div class="card">
+<!-- Карточка RAM -->
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header-flex">
 <div class="card-title">Оперативная память</div>
+<span class="expand-icon">▼</span>
+</div>
 <div class="metric-value">5.4 / 8 GB</div>
 <div class="progress-bar">
 <div class="progress-fill-ram"></div>
 </div>
+
+<div class="details-panel">
+<div class="detail-row"><span>Использовано:</span> <span>67.5%</span></div>
+<div class="detail-row"><span>Кэш / Буфер:</span> <span>1.1 GB</span></div>
+<div class="detail-row"><span>Свободно:</span> <span>1.5 GB</span></div>
+<div class="detail-row"><span>Swap:</span> <span>0 MB (0%)</span></div>
+</div>
 </div>
 
-<div class="card">
+<!-- Карточка Веб-сервера -->
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header-flex">
 <div class="card-title">Статус Web-Сервера</div>
+<span class="expand-icon">▼</span>
+</div>
 <div class="metric-value server-status">200 OK</div>
 <div class="server-info">Nginx • Active (Running)</div>
+
+<div class="details-panel">
+<div class="detail-row"><span>Uptime:</span> <span>14 дн. 8 час.</span></div>
+<div class="detail-row"><span>SSL Сертификат:</span> <span>Действителен</span></div>
+<div class="detail-row"><span>Пинг:</span> <span>12 мс</span></div>
+<div class="detail-row"><span>Порт:</span> <span>443 (HTTPS)</span></div>
+</div>
 </div>
 
 </div>
 
 </div>
+
+<!-- Скрипт клика -->
+<script>
+function toggleCard(card) {
+card.classList.toggle('active');
+}
+</script>
 
 </body>
 </html>
