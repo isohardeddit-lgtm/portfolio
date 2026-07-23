@@ -1,75 +1,223 @@
-<! DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8"
-> <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>server Health Dashboard</title>
-<style
-> * { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Server Health Dashboard</title>
+<style>
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+
 body {
-background-color: #0b0f19; color: #f1f5f9;
-font-family: 'Segoe UI', system-ui, sans-serif;
-min-height: 100vh; display: flex; flex-direction: column;
-align-items: center; justify-content: center; padding: 20px;
+background-color: #080c14;
+color: #f8fafc;
+font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 40px 20px;
+background-image:
+radial-gradient(circle at 50% 0%, rgba(0, 243, 255, 0.12), transparent 50%),
+radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.08), transparent 40%);
 }
-.header { text-align: center; margin-bottom: 30px; }
-.header h1 { font-size: 2rem; color: #38bdf8; margin-bottom: 8px; }
-.status-badge {
-display: inline-block; width: 12px; height: 12px;
-background-color: #22c55e; radius-border: 50%;
-box-shadow: 0 0 10px #22c55e; animation: pulse 2s infinite;
+
+.container {
+width: 100%;
+max-width: 900px;
 }
-@keyframes импульс {
-0% { преобразование: масштаб(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
-100% { преобразование: масштаб(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+
+/* Навигация назад */
+.back-link {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+color: #00f3ff;
+text-decoration: none;
+font-size: 0.95rem;
+font-weight: 600;
+background: rgba(0, 243, 255, 0.08);
+border: 1px solid rgba(0, 243, 255, 0.3);
+padding: 8px 18px;
+border-radius: 20px;
+margin-bottom: 30px;
+transition: all 0.3s ease;
+backdrop-filter: blur(5px);
 }
+
+.back-link:hover {
+background: rgba(0, 243, 255, 0.2);
+box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+transform: translateX(-3px);
+}
+
+/* Шапка страницы */
+.header {
+text-align: center;
+margin-bottom: 40px;
+}
+
+.header h1 {
+font-size: 2.2rem;
+font-weight: 900;
+color: #ffffff;
+text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 12px;
+margin-bottom: 10px;
+}
+
+.status-dot {
+width: 14px;
+height: 14px;
+background-color: #22c55e;
+border-radius: 50%;
+box-shadow: 0 0 12px #22c55e;
+animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.subtitle {
+color: #94a3b8;
+font-size: 1rem;
+letter-spacing: 1px;
+}
+
+/* Сетка карточек */
 .grid {
-display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-gap: 20px; width: 100%; max-width: 900px;
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+gap: 25px;
+width: 100%;
 }
+
 .card {
-background: #1e293b; рамка: 1px solid #334155;
-радиус границы: 16px; заполнение: 24px; box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+background: rgba(15, 23, 42, 0.75);
+border: 1px solid rgba(0, 243, 255, 0.25);
+border-radius: 20px;
+padding: 28px;
+backdrop-filter: blur(10px);
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+transition: all 0.3s ease;
 }
-.card-title { font-size: 0.9rem; color: #94a3b8; text-transform: заглавная; интервал между буквами: 1px; margin-bottom: 15px; }
-.metric-value { font-size: 2.2rem; font-weight: bold; color: #f8fafc; margin-bottom: 12px; }
-.progress-bar { ширина: 100%; высота: 8px; цвет фона: #334155; радиус границы: 4px; overflow: hidden; }
-.progress-fill { высота: 100%; фон: линейный градиент(90°, #38bdf8, #818cf8); ширина: 42%; радиус границы: 4px; }
-.ram-fill { background: linear-gradient(90deg, #a855f7, #ec4899); ширина: 68%; }
-.back-btn {
-color: #38bdf8; text-decoration: none; font-size: 0.95rem;
-display: inline-block; margin-bottom: 15px; font-weight: 600;
+
+.card:hover {
+border-color: rgba(0, 243, 255, 0.6);
+box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+transform: translateY(-4px);
 }
-.back-btn:hover { text-decoration: underline; }
+
+.card-title {
+font-size: 0.85rem;
+color: #94a3b8;
+text-transform: uppercase;
+letter-spacing: 1.5px;
+font-weight: 700;
+margin-bottom: 15px;
+}
+
+.metric-value {
+font-size: 2.4rem;
+font-weight: 900;
+color: #ffffff;
+margin-bottom: 15px;
+text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Прогресс бары */
+.progress-bar {
+width: 100%;
+height: 10px;
+background-color: rgba(51, 65, 85, 0.6);
+border-radius: 5px;
+overflow: hidden;
+}
+
+.progress-fill-cpu {
+height: 100%;
+background: linear-gradient(90deg, #00f3ff, #3b82f6);
+width: 42%;
+border-radius: 5px;
+box-shadow: 0 0 10px #00f3ff;
+}
+
+.progress-fill-ram {
+height: 100%;
+background: linear-gradient(90deg, #a855f7, #ec4899);
+width: 68%;
+border-radius: 5px;
+box-shadow: 0 0 10px #a855f7;
+}
+
+.server-status {
+color: #22c55e !important;
+text-shadow: 0 0 12px rgba(34, 197, 94, 0.5);
+}
+
+.server-info {
+color: #64748b;
+font-size: 0.85rem;
+margin-top: 10px;
+font-weight: 600;
+}
 </style>
 </head>
 <body>
 
-<div class="header"
-> <a href="index.html" class="back-btn">← На главную</a>
-<h1><span class="status-badge"></span> Панель здоровья сервера</h1>
-<p style="color: #94a3b8;" >Мониторинг узла Node-01 | Ubuntu Linux</p>
+<div class="container">
+
+<!-- Кнопка Назад -->
+<a href="index.html" class="back-link">
+← На главную
+</a>
+
+<!-- Шапка -->
+<div class="header">
+<h1>
+<span class="status-dot"></span>
+Server Health Dashboard
+</h1>
+<p class="subtitle">Мониторинг узла Node-01 | Ubuntu Linux</p>
 </div>
 
+<!-- Карточки с метриками -->
 <div class="grid">
-<div class="card"
-> <div class="card-title">Загрузка CPU</div>
+
+<div class="card">
+<div class="card-title">Загрузка CPU</div>
 <div class="metric-value">42%</div>
-<div class="progress-bar"><div class="progress-fill"></div></div>
+<div class="progress-bar">
+<div class="progress-fill-cpu"></div>
+</div>
 </div>
 
 <div class="card">
 <div class="card-title">Оперативная память</div>
 <div class="metric-value">5.4 / 8 GB</div>
-<div class="progress-bar"><div class="progress-fill ram-fill"></div></div>
+<div class="progress-bar">
+<div class="progress-fill-ram"></div>
+</div>
 </div>
 
 <div class="card">
-<div class="card-title">статус Web-сервера</div>
-<div class="metric-value" style="color: #22c55e;" >200 OK</div>
-<p style="color: #64748b; размер шрифта: 0,85 рем; margin-top: 8px;» >Nginx • Active</p>
+<div class="card-title">Статус Web-Сервера</div>
+<div class="metric-value server-status">200 OK</div>
+<div class="server-info">Nginx • Active (Running)</div>
 </div>
+
+</div>
+
 </div>
 
 </body>
