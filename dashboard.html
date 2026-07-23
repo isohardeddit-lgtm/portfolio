@@ -229,6 +229,147 @@ text-align: center;
 margin-top: 10px;
 font-style: italic;
 }
+/* Обёртка кнопки внизу страницы */
+.bottom-action-bar {
+display: flex;
+justify-content: center;
+padding: 30px 0 20px 0;
+width: 100%;
+}
+
+/* Кнопка */
+.btn-dashboard-scan {
+background: #21262d;
+color: #c9d1d9;
+border: 1px solid #30363d;
+padding: 8px 16px;
+border-radius: 6px;
+font-size: 0.85rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.2s ease;
+}
+
+.btn-dashboard-scan:hover {
+background: #30363d;
+border-color: #58a6ff;
+color: #58a6ff;
+box-shadow: 0 0 10px rgba(88, 166, 255, 0.15);
+}
+
+/* Модальное окно */
+.scan-modal-backdrop {
+display: none;
+position: fixed;
+top: 0; left: 0;
+width: 100vw; height: 100vh;
+background: rgba(13, 17, 23, 0.85);
+backdrop-filter: blur(4px);
+z-index: 9999;
+align-items: center;
+justify-content: center;
+padding: 20px;
+box-sizing: border-box;
+}
+
+.scan-modal-backdrop.active {
+display: flex;
+}
+
+.terminal-container {
+width: 100%;
+max-width: 650px;
+max-height: 80vh;
+background: #161b22;
+border: 1px solid #30363d;
+border-radius: 8px;
+box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+font-family: 'Courier New', Courier, monospace;
+overflow: hidden;
+}
+
+.terminal-header {
+background: #21262d;
+padding: 10px 15px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+border-bottom: 1px solid #30363d;
+}
+
+.terminal-title {
+display: flex;
+align-items: center;
+gap: 8px;
+font-size: 0.85rem;
+font-weight: bold;
+color: #8b949e;
+}
+
+.dot.green {
+width: 8px; height: 8px;
+background: #3fb950;
+border-radius: 50%;
+box-shadow: 0 0 6px #3fb950;
+}
+
+.modal-close-btn {
+background: none; border: none;
+color: #8b949e; font-size: 1.4rem;
+cursor: pointer;
+}
+
+.terminal-body {
+padding: 15px;
+max-height: 70vh;
+overflow-y: auto;
+}
+
+.section-title {
+color: #58a6ff;
+border-bottom: 1px dashed #30363d;
+padding-bottom: 4px;
+margin: 12px 0 8px 0;
+font-size: 0.8rem;
+text-transform: uppercase;
+}
+
+.data-item {
+background: rgba(255,255,255,0.02);
+padding: 8px 12px;
+border-radius: 4px;
+border: 1px solid rgba(255,255,255,0.04);
+margin-bottom: 6px;
+display: flex;
+justify-content: space-between;
+font-size: 0.85rem;
+}
+
+.label { color: #8b949e; }
+.value.status-scanning { color: #58a6ff; font-weight: bold; }
+.value.status-done { color: #3fb950; font-weight: bold; }
+
+.cursor {
+display: inline-block;
+width: 8px; height: 14px;
+background-color: #3fb950;
+margin-top: 8px;
+animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+0%, 100% { opacity: 1; }
+50% { opacity: 0; }
+}
+
+.footer-note {
+margin-top: 15px;
+padding: 10px;
+background: rgba(63, 185, 80, 0.08);
+border-left: 3px solid #3fb950;
+font-size: 0.75rem;
+color: #8b949e;
+}
 </style>
 </head>
 <body>
@@ -318,6 +459,103 @@ function toggleCard(card) {
 card.classList.toggle('active');
 }
 </script>
+<!-- Кнопка внизу страницы -->
+<div class="bottom-action-bar">
+<button class="btn-dashboard-scan" onclick="openClientScanModal()">
+🔎 Мои данные
+</button>
+</div>
 
+<!-- Модальное окно с терминалом -->
+<div id="scanModal" class="scan-modal-backdrop" onclick="closeClientScanModal(event)">
+<div class="terminal-container" onclick="event.stopPropagation()">
+<div class="terminal-header">
+<div class="terminal-title">
+<span class="dot green"></span>
+<span>CLIENT DIAGNOSTIC TERMINAL</span>
+</div>
+<button class="modal-close-btn" onclick="closeClientScanModal()">&times;</button>
+</div>
+
+<div class="terminal-body" id="scanOutput">
+<!-- Сюда выводится логирование -->
+</div>
+</div>
+</div>
+<script>
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+function openClientScanModal() {
+document.getElementById('scanModal').classList.add('active');
+startTerminalScan();
+}
+
+function closeClientScanModal(e) {
+document.getElementById('scanModal').classList.remove('active');
+}
+
+document.addEventListener('keydown', (e) => {
+if (e.key === 'Escape') closeClientScanModal();
+});
+
+async function startTerminalScan() {
+const container = document.getElementById('scanOutput');
+container.innerHTML = '<div id="modal-log"></div><span class="cursor"></span>';
+const log = document.getElementById('modal-log');
+
+async function scanRow(label, getValFn, delay = 250) {
+const rowId = 'm-row-' + Math.random().toString(36).substr(2, 7);
+log.insertAdjacentHTML('beforeend', `
+<div class="data-item" id="${rowId}">
+<span class="label">${label}</span>
+<span class="value status-scanning">[ SCANNING... ]</span>
+</div>
+`);
+
+await sleep(delay + Math.random() * 100);
+
+const val = await getValFn();
+const el = document.getElementById(rowId);
+if (el) {
+const valEl = el.querySelector('.value');
+valEl.className = 'value status-done';
+valEl.textContent = val;
+}
+}
+
+log.insertAdjacentHTML('beforeend', '<div class="section-title">Hardware & GPU</div>');
+await scanRow('GPU Model', () => {
+try {
+const gl = document.createElement('canvas').getContext('webgl');
+const debug = gl.getExtension('WEBGL_debug_renderer_info');
+return gl.getParameter(debug.UNMASKED_RENDERER_WEBGL);
+} catch(e) { return 'Н/Д'; }
+}, 300);
+await scanRow('CPU Cores', () => navigator.hardwareConcurrency || 'Н/Д', 200);
+await scanRow('RAM Approx.', () => navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'Н/Д', 150);
+await scanRow('Screen Resolution', () => `${screen.width}x${screen.height} (DPR: ${window.devicePixelRatio})`, 150);
+
+log.insertAdjacentHTML('beforeend', '<div class="section-title">Network & Environment</div>');
+await scanRow('Timezone', () => Intl.DateTimeFormat().resolvedOptions().timeZone, 150);
+await scanRow('Connection Type', () => {
+const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+return conn?.effectiveType ? conn.effectiveType.toUpperCase() : 'Н/Д';
+}, 250);
+
+log.insertAdjacentHTML('beforeend', '<div class="section-title">Client Signatures</div>');
+await scanRow('Canvas Fingerprint', () => {
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
+ctx.fillText('Client_Data_Test_123', 2, 15);
+return '...' + canvas.toDataURL().slice(-20);
+}, 350);
+
+log.insertAdjacentHTML('beforeend', `
+<div class="footer-note">
+<strong>Zero Storage:</strong> Все данные обработаны локально в памяти браузера. Ничего не передаётся.
+</div>
+`);
+}
+</script>
 </body>
 </html>
