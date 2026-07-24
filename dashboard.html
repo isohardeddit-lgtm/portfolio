@@ -503,7 +503,8 @@ const container = document.getElementById('scanOutput');
 container.innerHTML = '<div id="modal-log"></div><span class="cursor"></span>';
 const log = document.getElementById('modal-log');
 
-async function scanRow(label, getValFn, delay = 250) {
+// Универсальная функция для анимации строчек
+async function scanRow(label, getValFn, delay = 220) {
 const rowId = 'm-row-' + Math.random().toString(36).substr(2, 7);
 log.insertAdjacentHTML('beforeend', `
 <div class="data-item" id="${rowId}">
@@ -514,7 +515,13 @@ log.insertAdjacentHTML('beforeend', `
 
 await sleep(delay + Math.random() * 100);
 
-const val = await getValFn();
+let val = 'Н/Д';
+try {
+val = await getValFn();
+} catch(e) {
+val = 'Заблокировано / Ошибка';
+}
+
 const el = document.getElementById(rowId);
 if (el) {
 const valEl = el.querySelector('.value');
@@ -523,36 +530,86 @@ valEl.textContent = val;
 }
 }
 
+// --- БЛОК 1: ОС И БРАУЗЕР ---
+log.insertAdjacentHTML('beforeend', '<div class="section-title">OS & Platform Engine</div>');
+
+await scanRow('Platform / OS', () => {
+const platform = navigator.userAgentData?.platform || navigator.platform || 'Unknown';
+const is64 = navigator.userAgent.includes('x86_64') || navigator.userAgent.includes('Win64') || navigator.userAgent.includes('x64');
+return `${platform} ${is64 ? '(64-bit)' : ''}`;
+}, 200);
+
+await scanRow('User Agent / Core', () => {
+if (navigator.userAgent.includes('Edg/')) return 'Chromium (MS Edge)';
+if (navigator.userAgent.includes('Chrome/')) return 'Chromium (Chrome/Brave/Opera)';
+if (navigator.userAgent.includes('Firefox/')) return 'Gecko (Firefox)';
+if (navigator.userAgent.includes('Safari/')) return 'WebKit (Safari)';
+return 'Custom / Unknown Engine';
+}, 200);
+
+// --- БЛОК 2: ЖЕЛЕЗО И ГРАФИКА ---
 log.insertAdjacentHTML('beforeend', '<div class="section-title">Hardware & GPU</div>');
+
 await scanRow('GPU Model', () => {
-try {
 const gl = document.createElement('canvas').getContext('webgl');
 const debug = gl.getExtension('WEBGL_debug_renderer_info');
-return gl.getParameter(debug.UNMASKED_RENDERER_WEBGL);
-} catch(e) { return 'Н/Д'; }
+return debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : 'Generic WebGL';
 }, 300);
-await scanRow('CPU Cores', () => navigator.hardwareConcurrency || 'Н/Д', 200);
-await scanRow('RAM Approx.', () => navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'Н/Д', 150);
-await scanRow('Screen Resolution', () => `${screen.width}x${screen.height} (DPR: ${window.devicePixelRatio})`, 150);
 
+await scanRow('CPU Cores', () => `${navigator.hardwareConcurrency || 'Н/Д'} Threads`, 150);
+await scanRow('RAM Approx.', () => navigator.deviceMemory ? `~${navigator.deviceMemory} GB` : 'Н/Д (Ограничено браузером)', 150);
+await scanRow('Screen Spec', () => `${screen.width}x${screen.height} (DPR: ${window.devicePixelRatio})`, 150);
+await scanRow('Touch Interface', () => navigator.maxTouchPoints > 0 ? `Поддерживается (${navigator.maxTouchPoints} касаний)` : 'Отсутствует (Мышь/Клавиатура)', 180);
+
+// --- БЛОК 3: СЕТЬ И ОКРУЖЕНИЕ ---
 log.insertAdjacentHTML('beforeend', '<div class="section-title">Network & Environment</div>');
+
 await scanRow('Timezone', () => Intl.DateTimeFormat().resolvedOptions().timeZone, 150);
 await scanRow('Connection Type', () => {
 const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-return conn?.effectiveType ? conn.effectiveType.toUpperCase() : 'Н/Д';
+return conn?.effectiveType ? `${conn.effectiveType.toUpperCase()} (${conn.downlink || '?'} Mbps)` : 'Н/Д';
 }, 250);
 
-log.insertAdjacentHTML('beforeend', '<div class="section-title">Client Signatures</div>');
+await scanRow('Battery', async () => {
+if ('getBattery' in navigator) {
+const b = await navigator.getBattery();
+return `${Math.round(b.level * 100)}% (${b.charging ? 'Заряжается' : 'От батареи'})`;
+}
+return 'Н/Д (Десктоп / Заблокировано)';
+}, 200);
+
+// --- БЛОК 4: ЦИФРОВОЙ СЛЕПОК И ТЕХНОЛОГИИ ---
+log.insertAdjacentHTML('beforeend', '<div class="section-title">Client Signatures & Web-Tech</div>');
+
 await scanRow('Canvas Fingerprint', () => {
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
 ctx.fillText('Client_Data_Test_123', 2, 15);
-return '...' + canvas.toDataURL().slice(-20);
+return '...' + canvas.toDataURL().slice(-22);
+}, 300);
+
+await scanRow('AudioContext Hash', async () => {
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+if (!AudioCtx) return 'Не поддерживается';
+const ctx = new AudioCtx();
+const osc = ctx.createOscillator();
+const snap = ctx.destination.channelCount + '_' + ctx.sampleRate;
+ctx.close();
+return `SampleRate: ${ctx.sampleRate}Hz [ID: ${snap}]`;
 }, 350);
 
+await scanRow('Advanced Tech Capabilities', () => {
+const features = [];
+if ('gpu' in navigator) features.push('WebGPU');
+if (typeof WebAssembly === 'object') features.push('WASM');
+if (window.SharedArrayBuffer) features.push('SAB');
+return features.length ? features.join(' | ') : 'Стандартный WebGL';
+}, 200);
+
+// Финальный дисклеймер
 log.insertAdjacentHTML('beforeend', `
 <div class="footer-note">
-<strong>Zero Storage:</strong> Все данные обработаны локально в памяти браузера. Ничего не передаётся.
+<strong>Zero Storage Compliance:</strong> Все параметры вычислены в реальном времени в RAM браузера. Данные не сохраняются и не передаются.
 </div>
 `);
 }
